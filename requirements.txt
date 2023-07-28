@@ -1,4 +1,7 @@
-
-asdasdasdasd
-asdasdasdasdas
-asdasdasdasdasasdasdasdasdasd
+beautifulsoup4==4.12.2
+langchain==0.0.246
+nltk==3.8.1
+PyPDF2==3.0.1
+python-dotenv==1.0.0
+spacy==3.6.0
+tiktoken==0.4.0
