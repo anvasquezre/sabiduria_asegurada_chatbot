@@ -1,0 +1,4 @@
+pandas==2.0.3
+SQLAlchemy==2.0.17
+yfinance==0.2.22
+pymongo==4.4.0
