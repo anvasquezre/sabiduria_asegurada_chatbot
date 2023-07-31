@@ -154,7 +154,7 @@ def load_embeddings() -> Any:
     Returns:
         Any: embeddings model
     """    
-    embeddings = HuggingFaceEmbeddings(model_name="distiluse-base-multilingual-cased-v1")
+    embeddings = HuggingFaceEmbeddings(model_name=config.EMBBEDINGS_MODEL)
     return embeddings
 
 def load_from_docs_qdrant(docs:list[Document],

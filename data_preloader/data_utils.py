@@ -96,8 +96,6 @@ def list_files(dataset_path: Optional[str] = str(Path(config.DATASET_ROOT_PATH) 
 
 
 def download_all_files() -> None:
-    s3_client = get_s3_client()
-    s3_resource = get_s3_resource()
     list_filepath, list_keys = get_filepaths()
     download_resources(list_filepath, list_keys)
     print("Data downloaded successfully \n\n","\n".join(list_files()))
