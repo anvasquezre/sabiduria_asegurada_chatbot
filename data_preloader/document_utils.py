@@ -11,6 +11,8 @@ import os
 from langchain.vectorstores import Qdrant
 import text_preprocessing as tp
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
+import unstructured
+
 
 def load_docs(sub_path:[str]) -> list[Document]:
     """ Load documents from a subpath to Document class for further use in Qdrant
@@ -34,15 +36,15 @@ def create_splitter() -> CharacterTextSplitter:
     """    
     tiktoken_splitter = CharacterTextSplitter.from_tiktoken_encoder(
     model_name=config.TIKTOKEN_EMBBEDINGS_MODEL,
-    chunk_size=config.CHUNK_SIZE,
-    chunk_overlap=config.CHUNK_OVERLAP,
+    chunk_size=int(config.CHUNK_SIZE),
+    chunk_overlap=int(config.CHUNK_OVERLAP),
     separator="[articulo]{0,1}[ARTICULO]{0,1}[ARTÍCULO]{0,1}[Artículo]{0,1}",
     keep_separator=True,
 )
     return tiktoken_splitter
 
 def get_chunks(docs: List[Document], 
-            splitter: Optional[CharacterTextSplitter] = create_splitter()) -> list[str]:
+            splitter: Optional[CharacterTextSplitter] | None = None) -> list[str]:
     """ Split doc into chunks
 
     Args:
@@ -52,14 +54,17 @@ def get_chunks(docs: List[Document],
     Returns:
         list: list of splitted text
     """
+    if not splitter:
+        splitter = create_splitter()
+    
     chunks = splitter.split_documents(docs)
     return chunks
 
-def get_policies_index(pdf_list:[Optional[str]] = os.listdir(str(Path(config.DATASET_ROOT_PATH) /  "raw_pdfs"))) -> list[dict[str,int,int,str,int]]:
+def get_policies_index(pdf_list:Optional[list[str]] | None = None) -> list[dict[str,int,int,str,int]]:
     """ Get policies index from pdf_list in directory, format: {"policy_number": str, "start_page": int, "end_page": int, "filepath": str, "num_pages": int}
 
     Args:
-        pdf_list (Optional[str]], optional): _description_. Defaults to os.listdir(str(Path(config.DATASET_ROOT_PATH) /  "raw_pdfs")).
+        pdf_list (Optional[list[str]], optional): List of strings with paths. Defaults to None.
 
     Returns:
         list[dict[str,int,int,str,int]]: _description_
@@ -132,12 +137,15 @@ def split_by_index(policies_list:list[dict[str,int,int,str,int]]) -> None:
                 
     return 
 
-def divide_policies(pdf_list:[Optional[str]] = os.listdir(str(Path(config.DATASET_ROOT_PATH) /  "raw_pdfs"))):
+def divide_policies(pdf_list:Optional[list[str]] | None = None):
     """ Divide policies into policy chunks and save them in raw_chunks folder
-    """    
-    policies_list = get_policies_index(pdf_list)
-    split_by_index(policies_list)
-    return
+    """
+    if pdf_list:    
+        policies_list = get_policies_index(pdf_list)
+        split_by_index(policies_list)
+        return print("Policies divided into subpolicies")
+    else:
+        return print("No pdfs provided")
 
 
 def load_embeddings() -> Any:
@@ -151,7 +159,8 @@ def load_embeddings() -> Any:
 
 def load_from_docs_qdrant(docs:list[Document],
                         embeddings:Any , 
-                        collection_name: Optional[str] = config.COLLECTION_CHUNKS) -> None:
+                        collection_name: Optional[str] = config.COLLECTION_CHUNKS,
+                        ) -> None:
     """ Load documents into Qdrant
 
     Args:
@@ -162,6 +171,7 @@ def load_from_docs_qdrant(docs:list[Document],
     db_qdrant_chunks = Qdrant.from_documents(docs, 
                         embedding=embeddings,
                         collection_name=collection_name,
+                        url = config.QDRANT_HOST
                         )
     
     return 
@@ -186,7 +196,8 @@ def load_from_texts_qdrant(docs:list[str],
                         texts=docs,
                         embedding=embeddings,
                         collection_name=collection_name,
-                        metadatas=metadata
+                        metadatas=metadata,
+                        url = config.QDRANT_HOST
                         )
     
     return 

@@ -13,5 +13,34 @@ services:
     env_file:
       - .env   
   
+  db_healthcheck:
+    restart: no
+    build:
+      context: ./data_preloader
+      dockerfile: Dockerfile
+      target: healthcheck
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    env_file:
+      - .env
+    depends_on:
+      qdrant:
+        condition: service_started
 
-
+  data_preloader:
+    restart: no
+    build:
+      context: ./data_preloader
+      dockerfile: Dockerfile
+      target: build
+    depends_on:
+      db_healthcheck:
+        condition: service_completed_successfully
+      qdrant:
+        condition: service_started
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    env_file:
+      - .env

@@ -3,13 +3,10 @@
 from numpy import divide
 from data_utils import download_all_files
 from document_utils import (
-    create_splitter,
     get_chunks,
-    get_policies_index,
     load_docs,
     load_from_docs_qdrant,
     load_from_texts_qdrant,
-    split_by_index,
     divide_policies,
     map_docs_metadata,
     load_embeddings
@@ -21,7 +18,7 @@ def main():
     # Downloading data from S3
     _ , list_names = download_all_files()
     # Splitting data by policies and saving it to raw_chunks folder
-    divide_policies()
+    divide_policies(list_names)
     # Loading splitted data
     docs = load_docs("raw_chunks")
     # Gettings chunks from docs
