@@ -1,92 +1,17 @@
 version: "3.9"
 
 services:
-  chroma_server:
-      image: server
-      build:
-        context: ./chroma_service
-        dockerfile: Dockerfile
-      volumes:
-        - ./:/chroma
-        - index_data:/index_data
-      command: uvicorn chromadb.app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --log-config log_config.yml
-      environment:
-        - IS_PERSISTENT=TRUE
-      ports:
-        - 8080:8080
-      networks:
-        - net
-      env_file:
-        - .env
-      
-  data_preloader:
-    restart: no
-    build:
-      context: ./data_preloader
-      dockerfile: Dockerfile
-      target: build
-    depends_on:
-      db_healthcheck:
-        condition: service_completed_successfully
-    environment:
-      - DB_NAME = ${DB_NAME}
-      - SPLITS_COLLECTION = ${SPLITS_COLLECTION}
-      - INDEX_COLLECTION = ${INDEX_COLLECTION}
-      - DB_URI = ${DB_URI}
-    networks:
-      - net
-    env_file:
-      - .env
-
-  db_healthcheck:
-    restart: no
-    build:
-      context: ./data_preloader
-      dockerfile: Dockerfile
-      target: healthcheck
-    environment:
-      - DB_NAME = ${DB_NAME}
-      - SPLITS_COLLECTION = ${SPLITS_COLLECTION}
-      - INDEX_COLLECTION = ${INDEX_COLLECTION}
-      - DB_URI = ${DB_URI}
-    env_file:
-      - .env
-    depends_on:
-      chroma_server:
-        condition: service_started
-
-  model:
+  qdrant:
     restart: unless-stopped
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    image: qdrant/qdrant:v1.2.2
     environment:
-      - DB_NAME = ${DB_NAME}
-      - SPLITS_COLLECTION = ${SPLITS_COLLECTION}
-      - INDEX_COLLECTION = ${INDEX_COLLECTION}
-      - DB_URI = ${DB_URI}
-    networks:
-      - net
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    ports:
+    - ${QDRANT_HOST_PORT}:6333
+    volumes:
+      - ./data/qdrant_storage:/qdrant/storage
     env_file:
-      - .env
-    depends_on:
-      chroma_server:
-        condition: service_started
-      data_preloader:
-        condition: service_completed_successfully
-
-volumes:
-  mongodb_volume:
-  volumes:
-  index_data:
-    driver: local
-  backups:
-    driver: local
-
-networks:
-  net:
-    driver: bridge
-
+      - .env   
   
 
 
