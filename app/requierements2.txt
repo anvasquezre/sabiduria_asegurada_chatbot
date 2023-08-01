@@ -1,0 +1,261 @@
+aiofiles==23.1.0
+aiohttp==3.8.5
+aiosignal==1.3.1
+altair==5.0.1
+anyio==3.7.1
+asttokens @ file:///home/conda/feedstock_root/build_artifacts/asttokens_1670263926556/work
+async-timeout==4.0.2
+asyncer==0.0.2
+attrs==23.1.0
+auth0-python==4.4.0
+backcall @ file:///home/conda/feedstock_root/build_artifacts/backcall_1592338393461/work
+backoff==2.2.1
+backports.functools-lru-cache @ file:///home/conda/feedstock_root/build_artifacts/backports.functools_lru_cache_1687772187254/work
+beautifulsoup4==4.12.2
+bidict==0.22.1
+blinker==1.6.2
+blis==0.7.10
+boto3==1.28.9
+botocore==1.31.9
+Brotli==1.0.9
+cachetools==5.3.1
+catalogue==2.0.8
+certifi==2023.5.7
+cffi==1.15.1
+chainlit==0.6.1
+chardet==5.1.0
+charset-normalizer==3.2.0
+chroma-hnswlib==0.7.1
+chromadb==0.4.2
+click==8.1.6
+cmake==3.27.0
+coloredlogs==15.0.1
+confection==0.1.0
+contourpy==1.1.0
+cryptography==41.0.2
+cycler==0.11.0
+cymem==2.0.7
+dataclasses-json==0.5.13
+debugpy @ file:///home/builder/ci_310/debugpy_1640789504635/work
+decorator @ file:///home/conda/feedstock_root/build_artifacts/decorator_1641555617451/work
+Deprecated==1.2.14
+docopt==0.6.2
+duckduckgo-search==3.8.4
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0-py3-none-any.whl#sha256=83276fc78a70045627144786b52e1f2728ad5e29e5e43916ec37ea9c26a11212
+entrypoints @ file:///home/conda/feedstock_root/build_artifacts/entrypoints_1643888246732/work
+et-xmlfile==1.1.0
+exceptiongroup==1.1.2
+executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1667317341051/work
+fastapi==0.97.0
+fastapi-socketio==0.0.10
+ffmpy==0.3.1
+filelock==3.12.2
+filetype==1.2.0
+flatbuffers==23.5.26
+fonttools==4.41.1
+frozenlist==1.4.0
+fsspec==2023.6.0
+gitdb==4.0.10
+GitPython==3.1.32
+googleapis-common-protos==1.60.0
+gradio==3.39.0
+gradio_client==0.3.0
+greenlet==2.0.2
+grpcio==1.56.2
+grpcio-tools==1.56.2
+h11==0.14.0
+h2==4.1.0
+hpack==4.0.0
+httpcore==0.17.3
+httptools==0.6.0
+httpx==0.24.1
+huggingface-hub==0.16.4
+humanfriendly==10.0
+hyperframe==6.0.1
+idna==3.4
+importlib-metadata==6.0.1
+importlib-resources==6.0.0
+ipykernel @ file:///home/conda/feedstock_root/build_artifacts/ipykernel_1655369107642/work
+ipython @ file:///home/conda/feedstock_root/build_artifacts/ipython_1685727741709/work
+jedi @ file:///home/conda/feedstock_root/build_artifacts/jedi_1669134318875/work
+Jinja2==3.1.2
+jmespath==1.0.1
+joblib==1.3.1
+jsonschema==4.18.4
+jsonschema-specifications==2023.7.1
+jupyter-client @ file:///home/conda/feedstock_root/build_artifacts/jupyter_client_1654730843242/work
+jupyter_core @ file:///home/conda/feedstock_root/build_artifacts/jupyter_core_1686775611663/work
+kiwisolver==1.4.4
+langchain==0.0.239
+langcodes==3.3.0
+langsmith==0.0.13
+lark==1.1.7
+linkify-it-py==2.0.2
+lit==16.0.6
+lxml==4.9.3
+Markdown==3.4.3
+markdown-it-py==2.2.0
+MarkupSafe==2.1.3
+marshmallow==3.20.1
+matplotlib==3.7.2
+matplotlib-inline @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-inline_1660814786464/work
+mdit-py-plugins==0.3.3
+mdurl==0.1.2
+monotonic==1.6
+mpmath==1.3.0
+msg-parser==1.2.0
+multidict==6.0.4
+murmurhash==1.0.9
+mypy-extensions==1.0.0
+nest-asyncio @ file:///home/conda/feedstock_root/build_artifacts/nest-asyncio_1664684991461/work
+networkx==3.1
+nltk==3.8.1
+nodeenv==1.8.0
+numexpr==2.8.4
+numpy==1.25.1
+nvidia-cublas-cu11==11.10.3.66
+nvidia-cuda-cupti-cu11==11.7.101
+nvidia-cuda-nvrtc-cu11==11.7.99
+nvidia-cuda-runtime-cu11==11.7.99
+nvidia-cudnn-cu11==8.5.0.96
+nvidia-cufft-cu11==10.9.0.58
+nvidia-curand-cu11==10.2.10.91
+nvidia-cusolver-cu11==11.4.0.1
+nvidia-cusparse-cu11==11.7.4.91
+nvidia-nccl-cu11==2.14.3
+nvidia-nvtx-cu11==11.7.91
+olefile==0.46
+onnxruntime==1.15.1
+openai==0.27.8
+openapi-schema-pydantic==1.2.4
+openpyxl==3.1.2
+opentelemetry-api==1.18.0
+opentelemetry-exporter-otlp==1.18.0
+opentelemetry-exporter-otlp-proto-common==1.18.0
+opentelemetry-exporter-otlp-proto-grpc==1.18.0
+opentelemetry-exporter-otlp-proto-http==1.18.0
+opentelemetry-instrumentation==0.39b0
+opentelemetry-proto==1.18.0
+opentelemetry-sdk==1.18.0
+opentelemetry-semantic-conventions==0.39b0
+orjson==3.9.2
+overrides==7.3.1
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1681337016113/work
+pandas==2.0.3
+param==1.13.0
+parso @ file:///home/conda/feedstock_root/build_artifacts/parso_1638334955874/work
+pathy==0.10.2
+pdf2image==1.16.3
+pdfminer.six==20221105
+pexpect @ file:///home/conda/feedstock_root/build_artifacts/pexpect_1667297516076/work
+pickleshare @ file:///home/conda/feedstock_root/build_artifacts/pickleshare_1602536217715/work
+Pillow==9.5.0
+pipreqs==0.4.13
+platformdirs @ file:///home/conda/feedstock_root/build_artifacts/platformdirs_1689538620473/work
+portalocker==2.7.0
+posthog==3.0.1
+preshed==3.0.8
+prisma==0.9.1
+prompt-toolkit @ file:///home/conda/feedstock_root/build_artifacts/prompt-toolkit_1688565951714/work
+protobuf==4.23.4
+psutil @ file:///opt/conda/conda-bld/psutil_1656431268089/work
+ptyprocess @ file:///home/conda/feedstock_root/build_artifacts/ptyprocess_1609419310487/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl
+pulsar-client==3.2.0
+pure-eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_1642875951954/work
+pyarrow==12.0.1
+pycparser==2.21
+pydantic==1.10.11
+pydeck==0.8.0
+pydub==0.25.1
+Pygments @ file:///home/conda/feedstock_root/build_artifacts/pygments_1681904169130/work
+PyJWT==2.8.0
+Pympler==1.0.1
+PyMuPDF==1.22.5
+pypandoc==1.11
+pyparsing==3.0.9
+PyPDF2==3.0.1
+PyPika==0.48.9
+python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
+python-docx==0.8.11
+python-dotenv==1.0.0
+python-engineio==4.5.1
+python-graphql-client==0.4.3
+python-magic==0.4.27
+python-multipart==0.0.6
+python-pptx==0.6.21
+python-socketio==5.8.0
+pytz==2023.3
+pytz-deprecation-shim==0.1.0.post0
+PyYAML==6.0.1
+pyzmq @ file:///croot/pyzmq_1686601365461/work
+qdrant-client==1.3.2
+referencing==0.30.0
+regex==2023.6.3
+requests==2.31.0
+rich==13.5.1
+rpds-py==0.9.2
+s3transfer==0.6.1
+safetensors==0.3.1
+scikit-learn==1.3.0
+scipy==1.11.1
+seaborn==0.12.2
+semantic-version==2.10.0
+sentence-transformers==2.2.2
+sentencepiece==0.1.99
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+smart-open==6.3.0
+smmap==5.0.0
+sniffio==1.3.0
+socksio==1.0.0
+soupsieve==2.4.1
+spacy==3.6.0
+spacy-legacy==3.0.12
+spacy-loggers==1.0.4
+SQLAlchemy==2.0.19
+srsly==2.4.7
+stack-data @ file:///home/conda/feedstock_root/build_artifacts/stack_data_1669632077133/work
+starlette==0.27.0
+streamlit==1.25.0
+streamlit-chat==0.1.1
+sympy==1.12
+syncer==2.0.3
+tabulate==0.9.0
+tenacity==8.2.2
+thinc==8.1.10
+threadpoolctl==3.2.0
+tiktoken==0.4.0
+tokenizers==0.13.3
+toml==0.10.2
+tomli==2.0.1
+tomlkit==0.12.1
+toolz==0.12.0
+torch==2.0.1
+torchvision==0.15.2
+tornado @ file:///home/conda/feedstock_root/build_artifacts/tornado_1648827254365/work
+tqdm==4.65.0
+traitlets @ file:///home/conda/feedstock_root/build_artifacts/traitlets_1675110562325/work
+transformers==4.31.0
+triton==2.0.0
+typer==0.9.0
+typing-inspect==0.9.0
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1688315532570/work
+tzdata==2023.3
+tzlocal==4.3.1
+uc-micro-py==1.0.2
+unstructured==0.8.1
+uptrace==1.18.0
+urllib3==1.26.16
+uvicorn==0.22.0
+uvloop==0.17.0
+validators==0.20.0
+wasabi==1.1.2
+watchdog==3.0.0
+watchfiles==0.19.0
+wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_1673864653149/work
+websockets==11.0.3
+wrapt==1.15.0
+xlrd==2.0.1
+XlsxWriter==3.1.2
+yarg==0.1.9
+yarl==1.9.2
+zipp==3.16.2

@@ -10,13 +10,12 @@ from langchain import LLMChain
 from typing import List, Optional, Union
 from langchain.schema import AgentAction, AgentFinish, OutputParserException
 import re
-from chroma_service.chromadb import db
 import config
 from langchain.callbacks.streaming_stdout_final_only import (
     FinalStreamingStdOutCallbackHandler,
 )
 from langchain.tools import DuckDuckGoSearchRun , DuckDuckGoSearchResults
-from data_utils import connect_db
+from data_utils import connect_db, aconnect_db
 
 class CustomOutputParser(AgentOutputParser):
 
@@ -73,7 +72,7 @@ class CustomPromptTemplate(StringPromptTemplate):
 
 def get_chat_template():
     openai_template="""Eres un agente comercial de polizas de la empresa QuePlan. Eres encargado de responder las preguntas de los clientes sobre las polizas de la empresa.
-            Si no sabes la respuesta, simplemente di que no lo sabes, no trates de inventar una respuesta. Si te falta información, pide al usuario que la proporcione en la siguiente pregunta.
+            Si no sabes la respuesta, simplemente di que no lo sabes, no trates de inventar una respuesta.
             Crea una respuesta con la suficiente información para que el usuario pueda entender la respuesta. No te limites a responder con un 'Sí' o un 'No', ni por extenso ni abreviado.
             
             Utilizaras el siguiente contexto para responder la pregunta del usuario.
@@ -92,7 +91,7 @@ def get_chat_template():
 def get_agent_template():
     template = """Eres Sabiduria Asegurada,un agente comercial de polizas de la empresa QuePlan, lastimosamente no sabes nada de informacion y dependes unicamente de las herramientas que te proporciona la empresa. No sabes nada de nada y si la herramienta no proporciona responde cordialmente que no sabes.
     Eres encargado de responder las preguntas de los clientes sobre las polizas de la empresa.
-    Si no sabes la respuesta, simplemente di que no lo sabes, no trates de inventar una respuesta. Si te falta información, pide al usuario que la proporcione en la siguiente pregunta.
+    Si no sabes la respuesta, simplemente di que no lo sabes, no trates de inventar una respuesta.
     Crea una respuesta con la suficiente información para que el usuario pueda entender la respuesta. No te limites a responder con un 'Sí' o un 'No', ni por extenso ni abreviado.
             
     Como agente tienes acceso a las siguientes herramientas:
@@ -129,10 +128,24 @@ def custom_filter_chain(question:str,
                         ) -> str:
     docs = db.similarity_search(question, k = 1)
     most_likely_doc = docs[0].metadata['source']
-    return most_likely_doc
+    content = docs[0].page_content
+    return most_likely_doc , content
+
+async def acustom_filter_chain(question:str, 
+                        db = aconnect_db(config.COLLECTION_SUMMARY)
+                        ) -> str:
+    docs = await db.asimilarity_search(question, k = 1)
+    most_likely_doc = docs[0].metadata['source']
+    content = docs[0].page_content
+    return most_likely_doc, content
 
 def get_llm(model_name:str= config.OPENAI_MODEL) -> ChatOpenAI:
-    llm = ChatOpenAI(temperature=0, model_name=model_name, max_tokens=4_000,streaming=True, callbacks=[FinalStreamingStdOutCallbackHandler()] ) # 4_000 max tokens in the request, 16k model to avoid context loss
+    llm = ChatOpenAI(temperature=0,
+                     model_name=model_name, 
+                     max_tokens=4_000,
+                     streaming=True, 
+                     #callbacks=[FinalStreamingStdOutCallbackHandler()],
+                     openai_api_key=config.OPENAI_API_KEY) # 4_000 max tokens in the request, 16k model to avoid context loss
     return llm
 
 def custom_qa(question:str, 
@@ -141,9 +154,12 @@ def custom_qa(question:str,
               prompt = get_chat_template()
               ) -> dict[str,str,str]:
     response_dict = {}
-    docs = db.similarity_search(question, k = 10, filter={"source":custom_filter_chain(question)})
+    likely_doc , content = custom_filter_chain(question)
+    docs = db.similarity_search(question, k = 10, filter={"source":likely_doc})
     # Stuffing the content in a single window
-    chat_prompt_openai= prompt.format_prompt(question=question, context="\n".join([doc.page_content for doc in docs])).to_messages()
+    doc_list = [doc.page_content for doc in docs]
+    doc_list.append(content)
+    chat_prompt_openai= prompt.format_prompt(question=question, context="\n".join(doc_list)).to_messages()
     response = llm(chat_prompt_openai)
     response_dict['response'] = response
     response_dict['docs'] = docs
@@ -158,16 +174,33 @@ def get_tools(qa_type:int = 0) -> List[Tool]:
         search_results = search.run(f"{query}")
         return search_results 
     
+    async def aduck_duck_wrapper(query):
+        search = DuckDuckGoSearchResults()
+        search_results = await search.run(f"{query}")
+        return search_results 
+    
     # Directly answer the question
     def qa_tool(question:str) -> str:
         response_dict = custom_qa(question)
         response = response_dict['response']
         return response.content
 
-    db = connect_db(config.COLLECTION_SUMMARY)
+    db = connect_db(config.COLLECTION_CHUNKS)
     def qa_tool2(question:str) -> str:
-        docs = db.similarity_search(question, k = 10, filter={"source":custom_filter_chain(question)})
-        context="\n".join([doc.page_content for doc in docs])
+        likely_doc, content = custom_filter_chain(question)
+        docs = db.similarity_search(question, k = 6, filter={"source":likely_doc})
+        docs_list = [doc.page_content for doc in docs]
+        docs_list.append(content)
+        context="\n".join(docs_list)
+        return context
+    
+    adb = aconnect_db(config.COLLECTION_CHUNKS)
+    async def aqa_tool2(question:str) -> str:
+        likely_doc, content = await acustom_filter_chain(question)
+        docs = await adb.asimilarity_search(question, k = 6, filter={"source":likely_doc})
+        docs_list = [doc.page_content for doc in docs]
+        docs_list.append(content)
+        context=  "\n".join(docs_list)
         return context
     
     if qa_type == 0:
@@ -176,15 +209,16 @@ def get_tools(qa_type:int = 0) -> List[Tool]:
         qa_tool_func = qa_tool
     
     tools = [
-        Tool(
-            name = "Web Search",
-            func=duck_duck_wrapper,
-            description="useful for when you need to answer questions about current events, news or the current state of the world. Do not use it when asked about policies, in that case, use the policy search tool",
-        ),
+        # Tool(
+        #     name = "Web Search",
+        #     func=aduck_duck_wrapper,
+        #     description="useful for when you need to answer questions about current events, news or the current state of the world. Do not use it when asked about policies, in that case, use the policy search tool",
+        # ),
         Tool(
             name = "Policy Search",
-            func=qa_tool_func,
+            func=qa_tool2,
             description="useful for when you need to answer questions about an specific policy, in that case, use the policy search tool",
+            coroutine=aqa_tool2
         ),
     ]
 
@@ -210,7 +244,7 @@ def create_agent():
     prompt = get_agent_prompt()
     output_parser = get_output_parser()
     llm = get_llm()
-    llm_chain = LLMChain(llm,prompt)
+    llm_chain = LLMChain(llm=llm, prompt=prompt)
     tools = get_tools()
     tool_names = [tool.name for tool in tools]
     agent = LLMSingleActionAgent(
@@ -230,12 +264,12 @@ class ChatBOT():
     answer = ""
     db_query  = ""
     db_response = ""
-    db_summary = connect_db(config.COLLECTION_SUMMARY)
-    db_chunks = connect_db(config.COLLECTION_CHUNKS)
     
     def __init__(self):
         self.agent = create_agent()
-
+        self.db_summary = connect_db(config.COLLECTION_SUMMARY)
+        self.db_chunks = connect_db(config.COLLECTION_CHUNKS)
+        
     def get_related_docs(self):
         self.db_response = custom_filter_chain(self.db_query)
         return self.db_response
@@ -243,9 +277,17 @@ class ChatBOT():
     def clr_history(self):
         self.chat_history = []
         
-    def chat(self, query):
+    def chat(self, query, **kwargs):
         self.db_query = query
         question = {f'history': {'\n'.join(self.chat_history)}, 'input': f"{self.db_query}"}
-        self.answer = self.agent(question)
+        self.answer = self.agent.run(question, **kwargs)
         self.chat_history.append(f"Human: {question['input']}, AI: {self.answer}")
         return self.answer , self.chat_history, self.get_related_docs()
+    
+    async def achat(self, query, **kwargs):
+        self.db_query = query
+        question = {f'history': {'\n'.join(self.chat_history)}, 'input': f"{self.db_query}"}
+        self.answer = await self.agent.arun(question, **kwargs)
+        self.chat_history.append(f"Human: {question['input']}, AI: {self.answer}")
+        self.get_related_docs()
+        return self.answer

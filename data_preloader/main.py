@@ -21,13 +21,15 @@ def main():
     divide_policies(list_names)
     # Loading splitted data
     docs = load_docs("raw_chunks")
+
     # Gettings chunks from docs
     chunks = get_chunks(docs)
+
     # Getting embeddings function
     embeddings = load_embeddings()
     
     try:
-        load_from_docs_qdrant(docs, embeddings)
+        load_from_docs_qdrant(chunks, embeddings)
         print(f"Chunks saved in chunks collection {config.COLLECTION_CHUNKS}: {len(chunks)}")
     except Exception as e:
         print(e)

@@ -11,7 +11,7 @@ qdrant_host_port = "6333"
 prefix_bucket = 'queplan_insurance/'
 bucket_name = 'anyoneai-datasets'  
 maxkeys = 9999999
-tiktoken_embeds = "gpt-3.5-turbo-16k"
+tiktoken_embeds = "text-embedding-ada-002"
 model_name="distiluse-base-multilingual-cased-v1"
 
 TIKTOKEN_EMBBEDINGS_MODEL = os.getenv('TIKTOKEN_EMBBEDINGS_MODEL', tiktoken_embeds)

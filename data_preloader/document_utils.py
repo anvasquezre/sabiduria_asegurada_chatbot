@@ -171,8 +171,8 @@ def load_from_docs_qdrant(docs:list[Document],
     db_qdrant_chunks = Qdrant.from_documents(docs, 
                         embedding=embeddings,
                         collection_name=collection_name,
-                        url = config.QDRANT_HOST
-                        )
+                        url = config.QDRANT_HOST,
+                        prefer_grpc=True)
     
     return 
 
@@ -197,8 +197,8 @@ def load_from_texts_qdrant(docs:list[str],
                         embedding=embeddings,
                         collection_name=collection_name,
                         metadatas=metadata,
-                        url = config.QDRANT_HOST
-                        )
+                        url = config.QDRANT_HOST,
+                        prefer_grpc=True)
     
     return 
 

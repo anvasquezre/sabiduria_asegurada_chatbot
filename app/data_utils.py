@@ -1,4 +1,4 @@
-import qdrant_client
+import qdrant_client, grpc
 from langchain.vectorstores import Qdrant
 import os
 import config
@@ -27,6 +27,28 @@ def connect_db(collection:str,
 
     client = qdrant_client.QdrantClient(
         f"{config.QDRANT_HOST}:{config.QDRANT_HOST_PORT}")
+
+
+    db = Qdrant(client=client,
+                collection_name=collection,
+                embeddings=embeddings, 
+                distance_strategy=distance_strategy)
+    return db
+
+def aconnect_db(collection:str, 
+               distance_strategy:str = "COSINE",
+               embeddings = load_embeddings()) -> Qdrant:
+    """ Connect to Qdrant collection
+
+    Args:
+        collection (str): Name of collection
+        distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to "COSINE".
+    """    
+
+    client = qdrant_client.QdrantClient(
+        f"{config.QDRANT_HOST}:{config.QDRANT_HOST_PORT}",
+        grpc_port=6334, 
+        prefer_grpc=True)
 
 
     db = Qdrant(client=client,
