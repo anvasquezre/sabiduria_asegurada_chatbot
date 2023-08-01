@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  qdrant:
+    restart: unless-stopped
+    image: qdrant/qdrant:v1.2.2
+    environment:
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    ports:
+    - ${QDRANT_HOST_PORT}:6333
+    - 6334:6334
+    volumes:
+      - ./data/qdrant_storage:/qdrant/storage
+    env_file:
+      - .env   
+  
+  db_healthcheck:
+    restart: no
+    build:
+      context: ./data_preloader
+      dockerfile: Dockerfile
+      target: healthcheck
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    env_file:
+      - .env
+    depends_on:
+      qdrant:
+        condition: service_started
+
+  data_preloader:
+    restart: no
+    build:
+      context: ./data_preloader
+      dockerfile: Dockerfile
+      target: build
+    depends_on:
+      db_healthcheck:
+        condition: service_completed_successfully
+      qdrant:
+        condition: service_started
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    env_file:
+      - .env
+
+  app:
+    restart: unless-stopped
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: build
+    ports:
+      - 8000:8000
+    depends_on:
+      db_healthcheck:
+        condition: service_completed_successfully
+      qdrant:
+        condition: service_started
+      data_preloader:
+        condition: service_completed_successfully
+    environment:
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
+    env_file:
+      - .env
