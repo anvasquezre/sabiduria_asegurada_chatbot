@@ -14,5 +14,5 @@ WORKDIR /app/
 EXPOSE 8000
 
 FROM base as build
-ENTRYPOINT ["chainlit","run","chainlit.py","-w"]
+ENTRYPOINT ["chainlit","run","app.py","-w"]
 

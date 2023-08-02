@@ -12,6 +12,6 @@ def start():
 @cl.on_message
 async def main(message):
     agent = cl.user_session.get("agent")  # type: AgentExecutor
-    res = await agent.achat(message, callbacks=[cl.AsyncLangchainCallbackHandler(stream_final_answer=True)])
+    res = await agent.achat(message, callbacks=[cl.AsyncLangchainCallbackHandler()])
 
     await cl.Message(content=res).send()
