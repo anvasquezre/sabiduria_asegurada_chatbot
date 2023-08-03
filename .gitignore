@@ -1,5 +1,10 @@
 .pytest_cache
 model/__pycache__
 src/__pycache__
-.env
+app/__pycache__
+data_preloader/__pycache__
 
+.env
+qdrant_db/qdrant_storage/aliases
+qdrant_db/qdrant_storage/collections
+qdrant_db/qdrant_storage/raft_state

@@ -10,7 +10,7 @@ services:
     - ${QDRANT_HOST_PORT}:6333
     - 6334:6334
     volumes:
-      - ./data/qdrant_storage:/qdrant/storage
+      - ./qdrant_db/qdrant_storage:/qdrant/storage
     env_file:
       - .env   
   
