@@ -26,7 +26,11 @@ def connect_db(collection:str,
     """    
 
     client = qdrant_client.QdrantClient(
-        f"{config.QDRANT_HOST}:{config.QDRANT_HOST_PORT}")
+        host=config.QDRANT_HOST,
+        port=config.QDRANT_HOST_PORT,
+        grpc_port=6334, 
+        prefer_grpc=True
+        )
 
 
     db = Qdrant(client=client,
@@ -44,12 +48,12 @@ def aconnect_db(collection:str,
         collection (str): Name of collection
         distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to "COSINE".
     """    
-
     client = qdrant_client.QdrantClient(
-        f"{config.QDRANT_HOST}:{config.QDRANT_HOST_PORT}",
+        host=config.QDRANT_HOST,
+        port=config.QDRANT_HOST_PORT,
         grpc_port=6334, 
-        prefer_grpc=True)
-
+        prefer_grpc=True
+        )
 
     db = Qdrant(client=client,
                 collection_name=collection,
