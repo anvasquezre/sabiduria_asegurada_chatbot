@@ -1,6 +1,5 @@
 
 # Importing libraries
-from numpy import divide
 from data_utils import download_all_files
 from document_utils import (
     get_chunks,
