@@ -14,7 +14,7 @@ async def main(message):
     agent = cl.user_session.get("agent")  # type: AgentExecutor
     res = await agent.achat(
         message,
-        callbacks=[cl.AsyncLangchainCallbackHandler()]
+        #callbacks=[cl.AsyncLangchainCallbackHandler()]
         )
     await cl.Message(content=res).send()
     # print(agent.db_response)
