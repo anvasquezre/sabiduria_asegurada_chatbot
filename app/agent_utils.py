@@ -1,4 +1,4 @@
-import sys
+
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -8,17 +8,19 @@ from langchain.chat_models import ChatOpenAI
 from langchain.agents import Tool, AgentOutputParser, AgentExecutor,LLMSingleActionAgent,AgentOutputParser
 from langchain.prompts import StringPromptTemplate
 from langchain import LLMChain
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 from langchain.schema import AgentAction, AgentFinish, OutputParserException
 import re
+
 import config
 from langchain.callbacks.streaming_stdout_final_only import (
     FinalStreamingStdOutCallbackHandler,
 )
-from langchain.tools import DuckDuckGoSearchRun , DuckDuckGoSearchResults
 from data_utils import connect_db, aconnect_db
 import text_templates
-
+import chainlit as cl
+from bs4 import BeautifulSoup
+import requests
 
 class CustomOutputParser(AgentOutputParser):
 
@@ -100,11 +102,19 @@ def custom_filter_chain(question:str,
 
 async def acustom_filter_chain(question:str, 
                         db = aconnect_db(config.COLLECTION_SUMMARY)
-                        ) -> str:
-    docs = await db.asimilarity_search(question, k = 1)
+                        ) -> Tuple[str,str]:
+    docs = await db.asimilarity_search(question, k = 3)
     most_likely_doc = docs[0].metadata['source']
     content = docs[0].page_content
     return most_likely_doc, content
+
+async def acustom_doc_retrieval(question:str, 
+                        db = aconnect_db(config.COLLECTION_SUMMARY),
+                        ) -> Tuple[str,str]:
+    docs = await db.asimilarity_search(question, k = 1)
+    source_docs = [doc.metadata['source'] for doc in docs]
+    title = [doc.page_content for doc in docs]
+    return source_docs, title
 
 def get_llm(
     model_name:str= config.OPENAI_MODEL,
@@ -140,18 +150,36 @@ def custom_qa(question:str,
 
 
 def get_tools(
-    qa_type:int = 0
     ) -> List[Tool]:
     
-    def duck_duck_wrapper(query):
-        search = DuckDuckGoSearchResults()
-        search_results = search.run(f"{query}")
-        return search_results 
+    def greeting(query):
+        return f"Hola <nombre>, Soy PolicyGuru AI. Puedo responder preguntas sobre las polizas de QuePlan."
     
-    async def aduck_duck_wrapper(query):
-        search = DuckDuckGoSearchResults()
-        search_results = await search.run(f"{query}")
-        return search_results 
+    def get_news(query):
+        headers = {
+            "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
+        }
+        response = requests.get(
+            f"https://www.google.com/search?q={query}&gl=cl&tbm=nws&num=20", headers=headers
+        )
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        news_results = []
+        
+        for el in soup.select("div.SoaBEf"):
+            news_results.append(
+                {
+                    "title": el.select_one("div.MBeuO").get_text(),
+                    "snippet": el.select_one(".GI74Re").get_text(),
+                    "link": el.find("a")["href"],
+                    "date": el.select_one(".LfVVr").get_text(),
+                    "source": el.select_one(".NUnG9d span").get_text()
+                }
+            )
+        news_string = [f"Titulo\n{news['title']}\nTexto\n{news['snippet']}\nlink\n{news['link']}\nfecha\n{news['date']}\nfuente\n{news['source']}" for news in news_results]
+        news_text = "\n\n".join(news_string)
+        return news_text
     
     # Directly answer the question
     def qa_tool(question:str) -> str:
@@ -180,22 +208,24 @@ def get_tools(
         context=  "\n".join(docs_list)
         return context
     
-    if qa_type == 0:
-        qa_tool_func = qa_tool2
-    else:
-        qa_tool_func = qa_tool
-    
     tools = [
-        # Tool(
-        #     name = "Web Search",
-        #     func=aduck_duck_wrapper,
-        #     description="useful for when you need to answer questions about current events, news or the current state of the world. Do not use it when asked about policies, in that case, use the policy search tool",
-        # ),
+        Tool(
+            name = "Web Search",
+            func=get_news,
+            description="useful for when you need to answer questions about current events, news or the current state of the world. Do not use it when asked about specific policies, in that case, use the policy search tool",
+            coroutine=cl.make_async(get_news)
+        ),
         Tool(
             name = "Policy Search",
             func=qa_tool2,
             description="useful for when you need to answer questions about an specific policy, in that case, use the policy search tool",
             coroutine=aqa_tool2
+        ),
+        Tool(
+            name = "Greeting",
+            func=greeting,
+            description="Use this tool only to greet the user and introduce yourself",
+            coroutine=cl.make_async(greeting)
         ),
     ]
 
@@ -241,7 +271,7 @@ class ChatBOT():
     chat_history = []
     answer = ""
     db_query  = ""
-    db_response = ""
+    db_response = None
     
     def __init__(self):
         self.agent = create_agent()
@@ -250,25 +280,29 @@ class ChatBOT():
         self.db_response = custom_filter_chain(self.db_query)
         return self.db_response
     
-    def aget_related_docs(self):
-        self.db_response = acustom_filter_chain(self.db_query)
+    async def aget_related_docs(self):
+        self.db_response = await acustom_doc_retrieval(self.db_query)
         return self.db_response
     
     def clr_history(self):
         self.chat_history = []
+    
+    def clr_source(self):
+        self.db_response = None
         
     def chat(self, query, **kwargs):
         self.db_query = query
         question = {f'history': {'\n'.join(self.chat_history)}, 'input': f"{self.db_query}"}
         self.answer = self.agent.run(question, **kwargs)
-        self.chat_history.append(f"Human: {question['input']}, AI: {self.answer}")
+        self.chat_history.append(f"Preguntas anteriores: {question['input']}, Respuestas anteriores: {self.answer}")
         return self.answer , self.chat_history, self.get_related_docs()
     
     async def achat(self, query, **kwargs):
         self.db_query = query
         question = {f'history': {'\n'.join(self.chat_history)}, 'input': f"{self.db_query}"}
-        self.answer = await self.agent.arun(question, **kwargs)
-        self.chat_history.append(f"Human: {question['input']}, AI: {self.answer}")
-        await self.aget_related_docs()
-        
+        response = await self.agent.arun(question, **kwargs)
+        # source, content = await self.aget_related_docs()
+        # self.answer = response + "\n" + "Source: " + set(source)
+        self.answer = response
+        self.chat_history.append(f"Preguntas anteriores: {question['input']},\n\n Respuestas anteriores: {self.answer}")
         return self.answer
