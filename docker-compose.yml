@@ -45,6 +45,8 @@ services:
       - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
     env_file:
       - .env
+    volumes:
+      - ./data_preloader/dataset:/data_preloader/dataset
 
   app:
     restart: unless-stopped
@@ -66,3 +68,5 @@ services:
       - QDRANT_HOST_PORT=${QDRANT_HOST_PORT}
     env_file:
       - .env
+    volumes:
+      - ./data_preloader/dataset:/data_preloader/dataset
