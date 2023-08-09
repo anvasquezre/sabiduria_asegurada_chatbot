@@ -12,5 +12,5 @@ OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 
 EMBBEDINGS_MODEL=os.getenv('EMBBEDINGS_MODEL', model_name)
 
-
 OPENAI_MODEL = "gpt-3.5-turbo-16k"
+#OPENAI_MODEL = "gpt-4"
