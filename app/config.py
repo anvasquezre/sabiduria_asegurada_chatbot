@@ -8,7 +8,7 @@ QDRANT_HOST=os.getenv('QDRANT_HOST', qdrant_host)
 QDRANT_HOST_PORT=os.getenv('QDRANT_HOST_PORT', qdrant_host_port)
 COLLECTION_CHUNKS=os.getenv('COLLECTION_CHUNKS', 'chunks')
 COLLECTION_SUMMARY=os.getenv('COLLECTION_SUMMARY', 'summary')
-OPENAI_API_KEY=os.getenv("OPENAI_API_KEY","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")
+OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 
 EMBBEDINGS_MODEL=os.getenv('EMBBEDINGS_MODEL', model_name)
 
