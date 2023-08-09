@@ -41,9 +41,7 @@ Historial de conversacion anterior:
 {history}
 
 
-El primer paso a realizar con la siguiente pregunta es determinar si es aceptable para ser respondida por el agente de polizas o si es irrelevante. 
+
 Estas autorizado a saludar al usuario utilizando la herramienta "Greeting". Siempre ten cuenta el Historial de la conversacion anterior para responder la pregunta del usuario.
-Si es irrelevante responde:
-Final Answer: La pregunta no es relevante para el agente de polizas, por favor re escribe la pregunta.
 Question: {input}
 {agent_scratchpad}"""
