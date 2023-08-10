@@ -118,13 +118,15 @@ async def acustom_doc_retrieval(question:str,
 
 def get_llm(
     model_name:str= config.OPENAI_MODEL,
+    max_tokens:int= 2_000,
+    streaming:bool= True,
     **kwargs
     ) -> ChatOpenAI:
     
     llm = ChatOpenAI(temperature=0,
                      model_name=model_name, 
-                     max_tokens=4_000,
-                     streaming=True, 
+                     max_tokens=max_tokens,
+                     streaming=streaming, 
                      #callbacks=[FinalStreamingStdOutCallbackHandler()],
                      openai_api_key=config.OPENAI_API_KEY,
                      **kwargs) # 4_000 max tokens in the request, 16k model to avoid context loss
@@ -191,7 +193,7 @@ def get_tools(
                  db = connect_db(config.COLLECTION_CHUNKS)
                  ) -> str:
         likely_doc, content = custom_filter_chain(question)
-        docs = db.similarity_search(question, k = 6, filter={"source":likely_doc})
+        docs = db.similarity_search(question, k = 4, filter={"source":likely_doc})
         docs_list = [doc.page_content for doc in docs]
         docs_list.append(content)
         context="\n".join(docs_list)
@@ -202,7 +204,7 @@ def get_tools(
                         ) -> str:
         
         likely_doc, content = await acustom_filter_chain(question)
-        docs = await db.asimilarity_search(question, k = 6, filter={"source":likely_doc})
+        docs = await db.asimilarity_search(question, k = 4, filter={"source":likely_doc})
         docs_list = [doc.page_content for doc in docs]
         docs_list.append(content)
         context=  "\n".join(docs_list)
@@ -212,21 +214,21 @@ def get_tools(
         Tool(
             name = "Web Search",
             func=get_news,
-            description="useful for when you need to answer questions about current events, news or the current state of the world. Do not use it when asked about specific policies, in that case, use the policy search tool",
+            description=text_templates.WEB_SEARCH_DESCRIPTION,
             coroutine=cl.make_async(get_news)
         ),
         Tool(
             name = "Policy Search",
             func=qa_tool2,
-            description="useful for when you need to answer questions about an specific policy, in that case, use the policy search tool",
+            description=text_templates.POLICY_SEARCH_DESCRIPTION,
             coroutine=aqa_tool2
         ),
-        Tool(
-            name = "Greeting",
-            func=greeting,
-            description="Use this tool only to greet the user and introduce yourself",
-            coroutine=cl.make_async(greeting)
-        ),
+        # Tool(
+        #     name = "Greeting",
+        #     func=greeting,
+        #     description=text_templates.GREETING_DESCRIPTION,
+        #     coroutine=cl.make_async(greeting)
+        # ),
     ]
 
     return tools
