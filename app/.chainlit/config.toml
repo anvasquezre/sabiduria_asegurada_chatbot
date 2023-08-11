@@ -20,7 +20,7 @@ enable_telemetry = true
 user_env = []
 
 # Duration (in seconds) during which the session is saved when the connection is lost
-session_timeout = 60
+session_timeout = 0
 
 [UI]
 # Name of the app and chatbot.
@@ -33,7 +33,7 @@ name = "PolicyGuru"
 default_expand_messages = false
 
 # Hide the chain of thought details from the user in the UI.
-hide_cot = true
+hide_cot = false
 
 # Link to your github repo. This will add a github button in the UI's header.
 # github = ""
