@@ -69,4 +69,5 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data_preloader/dataset:/data_preloader/dataset
+      - ./data_preloader/dataset:/app/docs
+      - ./feedback:/app/feedback

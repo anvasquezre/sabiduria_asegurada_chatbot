@@ -44,9 +44,17 @@ Microservice forQdrant database initialization.
 
 Shared volume with Qdrant docker container. Saves all the embbegins information. Check the [documentation](https://qdrant.tech/).
 
-## **Diagram** 
+## **System's Diagram** 
 
-[TO DO] You can also take a look at the file `System_architecture_diagram.png` to have a graphical description of the microservices and how the communication is performed.
+You can also take a look at the file `images/System_architecture_diagram.drawio.png` to have a graphical description of the microservices and how the communication is performed.
+
+![System Diagram](images/System_architecture_diagram.drawio.png)
+
+## **Workflow**
+
+Code workflow 
+
+![Workflow](images/workflow.png)
 
 ## Folders architecture
 
