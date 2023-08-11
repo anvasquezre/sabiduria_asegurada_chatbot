@@ -13,4 +13,13 @@ OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 EMBBEDINGS_MODEL=os.getenv('EMBBEDINGS_MODEL', model_name)
 
 OPENAI_MODEL = "gpt-3.5-turbo-16k"
+MAX_TOKENS = 2048
+TEMPERATURE = 0.0
 #OPENAI_MODEL = "gpt-4"
+
+
+## Feedback
+
+FEEDBACK_PATH = "feedback"
+if not os.path.exists(FEEDBACK_PATH):
+    os.makedirs(FEEDBACK_PATH)

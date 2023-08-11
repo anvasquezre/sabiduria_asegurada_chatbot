@@ -1,11 +1,11 @@
 [project]
 # If true (default), the app will be available to anonymous users.
 # If false, users will need to authenticate and be part of the project to use the app.
-public = false
+public = true
 
 # The project ID (found on https://cloud.chainlit.io).
 # The project ID is required when public is set to false or when using the cloud database.
-id = "InsuranceBot-NWl4p5Anlr03"
+#id = "InsuranceBot-NWl4p5Anlr03"
 
 # Uncomment if you want to persist the chats.
 # local will create a database in your .chainlit directory (requires node.js installed).
@@ -20,7 +20,7 @@ enable_telemetry = true
 user_env = []
 
 # Duration (in seconds) during which the session is saved when the connection is lost
-session_timeout = 60
+session_timeout = 0
 
 [UI]
 # Name of the app and chatbot.
@@ -33,7 +33,7 @@ name = "PolicyGuru"
 default_expand_messages = false
 
 # Hide the chain of thought details from the user in the UI.
-hide_cot = true
+hide_cot = false
 
 # Link to your github repo. This will add a github button in the UI's header.
 # github = ""

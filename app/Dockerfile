@@ -11,6 +11,8 @@ ENV PYTHONPATH=$PYTHONPATH:/app
 #COPY --chown=app:app . /src
 COPY . /app
 WORKDIR /app/
+RUN mkdir -p ./app/docs
+RUN mkdir -p ./app/feedback
 
 EXPOSE 8000
 

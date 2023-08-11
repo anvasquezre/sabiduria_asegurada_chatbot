@@ -7,3 +7,5 @@ data_preloader/__pycache__
 qdrant_db/qdrant_storage/aliases
 qdrant_db/qdrant_storage/collections
 qdrant_db/qdrant_storage/raft_state
+stress_test/__pycache__
+app/docs/*.pdf

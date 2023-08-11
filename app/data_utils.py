@@ -1,13 +1,15 @@
 import qdrant_client, grpc
 from langchain.vectorstores import Qdrant
-import os
 import config
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
 from typing import Any, List, Optional
+from pathlib import Path
 
 def load_embeddings(model_name:str = config.EMBBEDINGS_MODEL ) -> Any:
     """ Load HuggingFaceEmbeddings
-
+    Args:
+        model_name (str, optional): Name of model. Defaults to `config.EMBBEDINGS_MODEL`.
+        
     Returns:
         Any: embeddings model
     """    
@@ -22,7 +24,11 @@ def connect_db(collection:str,
 
     Args:
         collection (str): Name of collection
-        distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to "COSINE".
+        distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to `COSINE`.
+        embeddings (Any, optional): Embeddings model. Defaults to `load_embeddings()`.
+        
+    Returns:
+        Qdrant: Qdrant Instance
     """    
 
     client = qdrant_client.QdrantClient(
@@ -46,7 +52,11 @@ def aconnect_db(collection:str,
 
     Args:
         collection (str): Name of collection
-        distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to "COSINE".
+        distance_strategy (str, optional): Distance Estrategy #EUCLID, #COSINE, #DOT. Defaults to `COSINE`.
+        embeddings (Any, optional): Embeddings model. Defaults to `load_embeddings()`.
+        
+    Returns:
+        Qdrant: Qdrant Instance
     """    
     client = qdrant_client.QdrantClient(
         host=config.QDRANT_HOST,
@@ -60,3 +70,16 @@ def aconnect_db(collection:str,
                 embeddings=embeddings, 
                 distance_strategy=distance_strategy)
     return db
+
+def save_feedback(feedback:dict, 
+                  path:str = config.FEEDBACK_PATH
+                  ) -> None:
+    """ Save feedback
+
+    Args:
+        feedback (dict): Feedback
+        path (str, optional): Path to save feedback. Defaults to `config.FEEDBACK_PATH`.
+    """
+    report = str(feedback)
+    with open(f"{config.FEEDBACK_PATH}/feedback.txt", "a") as file:
+            file.write(str(report + "\n"))
