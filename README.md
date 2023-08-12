@@ -14,36 +14,6 @@ Complete stand-alone application
 ```
 docker compose up --build
 ```
-## Modules Documentation :gift:
-Let's take a quick overview of each module:
-
-### **app** :computer:
-
-It has all the needed code to implement the front and backend of the chatbot. It uses Chainlit framework for LLMs.
-
-- `app/agent_utils.py`: Includes the required function for the creation of a custom Agent Class and ChatBOT Class.
-- `app/app.py`: Includes Chainlit front-end code
-- `app/chainlit.md`: Markdown file for Chainlit README
-- `app/config.py`: env variables for api configuration .
-- `app/data_utils.py`: Includes Database connection and embbedgins loading.
-- `app/text_templates.py`: Includes all the custom Prompt Templates.
-
-### **data_preloader** :floppy_disk:
-
-Microservice forQdrant database initialization. 
-
--   `dataset/`: Predefined folder to store dowloaded and processed PDFs. This folder is shared with APP microservice in the `docker-compose.yml`: file to allow the user to download the PDFs.
--   `config.py`: env variables for api configuration .
-- `data_utils.py` Functions to download the Data from S3.
-- `document_utils.py` Preprocessing/Cleaning and Qdrant loading functions.
-- `health_check.py` ENTRYPOINT for healtcheck microservice. Checks if Qdrant is ready to receive querys to avoid building errors.
-- `main.py` ENTRYPOINT for preloader microservice. Downloads, procceses and saves the data in Qdrant.
-- `text_preprocessing.py` Text normalization and preprocessing functions.
-
-### **qdrant_db** :mag_right:
-
-Shared volume with Qdrant docker container. Saves all the embbegins information. Check the [documentation](https://qdrant.tech/).
-
 ## **System's Diagram** 
 
 You can also take a look at the file `images/System_architecture_diagram.drawio.png` to have a graphical description of the microservices and how the communication is performed.
@@ -101,6 +71,57 @@ Code workflow
     └── __init__.py
 
 ```
+
+
+## Modules Documentation :gift:
+Let's take a quick overview of each module:
+
+### **app** :computer:
+
+It has all the needed code to implement the front and backend of the chatbot. It uses Chainlit framework for LLMs.
+
+- `app/agent_utils.py`: Includes the required function for the creation of a custom Agent Class and ChatBOT Class.
+- `app/app.py`: Includes Chainlit front-end code
+- `app/chainlit.md`: Markdown file for Chainlit README
+- `app/config.py`: env variables for api configuration .
+- `app/data_utils.py`: Includes Database connection and embbedgins loading.
+- `app/text_templates.py`: Includes all the custom Prompt Templates.
+- `feedback/feedback.txt`: Txt file to store reviews about answers.
+- `chainlit.md`: Markdown file for Chainlit `README`
+### **data_preloader** :floppy_disk:
+
+Microservice forQdrant database initialization. 
+
+-   `dataset/`: Predefined folder to store dowloaded and processed PDFs. This folder is shared with APP microservice in the `docker-compose.yml`: file to allow the user to download the PDFs.
+-   `config.py`: env variables for api configuration .
+- `data_utils.py` Functions to download the Data from S3.
+- `document_utils.py` Preprocessing/Cleaning and Qdrant loading functions.
+- `health_check.py` ENTRYPOINT for healtcheck microservice. Checks if Qdrant is ready to receive querys to avoid building errors.
+- `main.py` ENTRYPOINT for preloader microservice. Downloads, procceses and saves the data in Qdrant.
+- `text_preprocessing.py` Text normalization and preprocessing functions.
+
+### **dataset** :newspaper:
+
+Folder for data storage
+
+- `raw_chunks`: Folder with the processed policies divived by policy number
+- `raw_pdfs` Raw PDFS downloaded from S3
+
+### **images** :sunny:
+
+Key images for readme
+
+### **qdrant_db** :mag_right:
+
+Shared volume with Qdrant docker container. Saves all the embbegins information. Check the [documentation](https://qdrant.tech/).
+
+### **stress_test** :fire:
+
+Not related to the microservice architecture. Folder used to contain the locust fyle to test hardware performance.
+
+- `locustfile.py` Contains `locust`` tests.
+
+
 ## Feedback 📢
 
 We value your feedback and suggestions! If you have any ideas for improvement or encounter any issues, please let us know. 🙌📧
