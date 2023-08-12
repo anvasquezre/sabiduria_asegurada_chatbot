@@ -14,6 +14,14 @@ import config
 import pandas as pd
 
 def main():
+    """
+    Main function for processing and loading data into Qdrant.
+
+    This function represents the main process of downloading data from S3, splitting data by policies, loading and
+    processing documents, generating embeddings, and loading data into the Qdrant database for both chunks and summaries.
+
+    """
+    
     # Downloading data from S3
     _ , list_names = download_all_files()
     # Splitting data by policies and saving it to raw_chunks folder
